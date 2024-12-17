@@ -153,53 +153,38 @@ def get_n_random_pose_images(folder_path: str, n: int = 4):
 def text_to_multi_id_generation_process(pil_faceid_images):
     num_persons = len(pil_faceid_images)
 
-    # prompts/negative_prompts는 4개씩 있다고 가정
-    # (각각의 prompt에 대해 서로 다른 pose를 매칭)
-
-    negative_prompt = "out of frame, lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature,"
-
     if num_persons == 2:
-        prompts = [
-            "christmas photo of two people",
-            "happy and smiling two people",
-            "good feeling two people",
-            "A DSLR photo of a heartfelt reminder wedding portrait on a tropical beach: a couple seated on a fallen palm tree by the shore, the man in a white suit with a black bowtie and the woman in an elegant white lace wedding dress, holding a bouquet of colorful flowers. Seated between them are their young daughter in a delicate white lace dress with floral accessorie, and their young son with a white shirt and beige trousers. The background features lush green palm trees, a serene blue ocean, and beutiful sunlight, creating a warm and idyllic atmosphere. Extreme detail, high quality."
-        ]
-        negative_prompt = "one person, three people, four people" + negative_prompt
-        negative_prompts = negative_prompt * len(prompts)
+        num_persons_word = "two"
+        negative_prompt = "nsfw, extra hands, extra arms, one person, three people, out of frame, lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature,",
+        negative_prompts = negative_prompt * 4
         pose_folder = "assets/2_people"
 
     elif num_persons == 3:
-        prompts = [
-            "three people",
-            "family portrait",
-            "group portrait",
-            "A DSLR photo of a heartfelt reminder wedding portrait on a tropical beach: a couple seated on a fallen palm tree by the shore, the man in a white suit with a black bowtie and the woman in an elegant white lace wedding dress, holding a bouquet of colorful flowers. Seated between them are their young daughter in a delicate white lace dress with floral accessorie, and their young son with a white shirt and beige trousers. The background features lush green palm trees, a serene blue ocean, and beutiful sunlight, creating a warm and idyllic atmosphere. Extreme detail, high quality."
-        ]
-        negative_prompt = "two people, one person, four people" + negative_prompt
-        negative_prompts = negative_prompt * len(prompts)
+        num_persons_word = "three"
+        negative_prompt = "nsfw, extra hands, extra arms, one person, two people, out of frame, lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature,",
+        negative_prompts = negative_prompt * 4
         pose_folder = "assets/3_people"
 
     elif num_persons == 4:
-        prompts = [
-            "four people",
-            "family portrait",
-            "group portrait",
-            "A DSLR photo of a heartfelt reminder wedding portrait on a tropical beach: a couple seated on a fallen palm tree by the shore, the man in a white suit with a black bowtie and the woman in an elegant white lace wedding dress, holding a bouquet of colorful flowers. Seated between them are their young daughter in a delicate white lace dress with floral accessorie, and their young son with a white shirt and beige trousers. The background features lush green palm trees, a serene blue ocean, and beutiful sunlight, creating a warm and idyllic atmosphere. Extreme detail, high quality.",
-        ]
-        negative_prompt = "two people, one person, three people" + negative_prompt
-        negative_prompts = negative_prompt * len(prompts)
+        num_persons_word = "four"
+        negative_prompt = "nsfw, extra hands, extra arms, one person, two people, three people, out of frame, lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature,",
+        negative_prompts = negative_prompt * 4
         pose_folder = "assets/4_people"
 
     else:
-        prompts = [
-            "people",
-            "portrait",
-            "group portrait",
-            "group photo",
-        ]
-        negative_prompts = negative_prompt * len(prompts)
+        num_persons_word = ""
+        negative_prompt = "nsfw, extra hands, extra arms, out of frame, lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature,",
+        negative_prompts = negative_prompt * 4
         pose_folder = None  # ControlNet 미적용
+
+    # prompts/negative_prompts는 4개씩 있다고 가정
+    # (각각의 prompt에 대해 서로 다른 pose를 매칭)
+    prompts = [
+        f"A DSLR photo of moody and atmospheric film noir scene featuring {num_persons_word} people with intense and brooding expressions, captured in dramatic lighting and shadowy contrasts for a sense of mystery and intrigue. High qaulity, Greyscale, Cinematic",
+        f"A vivid and graphic comic book-style illustration of {num_persons_word} people with animated and exaggerated expressions, featuring larger-than-life contours and dynamic action that convey a sense of lightheartedness and fun.",
+        f"A photo of {num_persons_word} people in a family",
+        f"A photo of {num_persons_word} people, best quality, realistic details, vivid colors, natural lighting",
+    ]
 
     # 이제 각 프롬프트마다 1장의 이미지를 생성하므로, 총 4×1=4장
     # 하지만 "프롬프트 x 포즈"를 4×4=16장 만들고 싶다면 
@@ -241,7 +226,7 @@ def text_to_multi_id_generation_process(pil_faceid_images):
     #        안쪽 루프: prompts 4개
     # 총 4×4=16장
     # 시드는 4개뿐이므로, 4개의 prompt에 맞춰 반복해서 사용
-    seeds = [42, 1234, 1001, 2023]
+    seeds = [10, 10, 10, 10]
 
     # 업로드된 이미지 바이너리 → PIL 변환
     pil_images = []
@@ -357,11 +342,12 @@ if __name__ == "__main__":
 
     text_to_multi_id_description = r"""🚀🚀🚀빠른 시작:<br>
         1. 얼굴이 있는 여러 이미지를 업로드한 후 <b>생성하기</b> 버튼을 클릭하세요. 🤗<br>
+        2. 업로드한 얼굴이 포함된 가족 사진을 만들어 드립니다.
         """
 
     text_to_multi_id_tips = r"""💡💡💡팁:<br>
-        1. 업로드 폴더(예: assets/2_people/)에 최소 4장의 이미지가 있어야 4개 포즈를 전부 사용 가능합니다.<br>
-        2. 얼굴 형태가 뭉개지면 faceid_scale, face_structure_scale, guidance_scale, inference_steps 등을 조정해 보세요.<br>
+        1. 배경이 깔끔한 정면 사진을 사용하는걸 추천 드립니다.
+        2. 마음에 드는 사진을 저장해 주세요!
         """
 
     block = gr.Blocks(title="가족 사진 생성").queue()
